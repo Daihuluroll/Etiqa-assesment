@@ -112,6 +112,50 @@
   overflow: hidden;
 }
 
+.repo-date {
+  margin-bottom: 8px;
+}
+
+.repo-date span {
+  display: inline-block;
+  border: 1.5px solid #1e90ff; /* DodgerBlue */
+  color: #0a66d1;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: rgba(30,144,255,0.04);
+}
+
+.pagination {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  margin: 18px 0;
+}
+
+.page-button {
+  background: #0366d6;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.page-button:disabled {
+  background: #c7dbf8;
+  cursor: default;
+  opacity: 0.7;
+}
+
+.page-info {
+  font-weight: 600;
+  color: #333;
+}
+
 .repo-footer {
   display: flex;
   justify-content: space-between;

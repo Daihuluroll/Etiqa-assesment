@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import './App.css'
 
 function formatDateDaysAgo(days) {
@@ -10,13 +10,21 @@ function formatDateDaysAgo(days) {
   return `${year}-${month}-${day}`
 }
 
+function formatDateDMY(dateString) {
+  if (!dateString) return 'N/A';
+  const d = new Date(dateString);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${day}-${month}-${year}`;
+}
+
 export default function App() {
   const [repos, setRepos] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
-  const sentinelRef = useRef(null)
 
   const fetchRepos = useCallback(async (pageToLoad = 1) => {
     if (!hasMore && pageToLoad !== 1) return
@@ -33,8 +41,8 @@ export default function App() {
       }
       const data = await res.json()
       const items = data.items || []
-      if (pageToLoad === 1) setRepos(items)
-      else setRepos(prev => [...prev, ...items])
+      // For pagination we replace the list with the page's items
+      setRepos(items)
       setHasMore(items.length === per_page)
     } catch (err) {
       setError(err.message || String(err))
@@ -49,20 +57,25 @@ export default function App() {
     setHasMore(true)
   }, [])
 
-  useEffect(() => {
-    if (!sentinelRef.current) return
-    const obs = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && !loading && hasMore) {
-          const next = page + 1
-          setPage(next)
-          fetchRepos(next)
-        }
-      })
-    }, { rootMargin: '200px' })
-    obs.observe(sentinelRef.current)
-    return () => obs.disconnect()
-  }, [fetchRepos, loading, page, hasMore])
+  // Pagination: handlers to change page
+  const goToPage = async (newPage) => {
+    if (newPage < 1) return
+    if (!hasMore && newPage > page) return
+    setPage(newPage)
+    await fetchRepos(newPage)
+    // Scroll back to top after loading the new page
+    if (typeof window !== 'undefined' && window.scrollTo) {
+      try {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      } catch (e) {
+        // fallback for older browsers
+        window.scrollTo(0, 0)
+      }
+    }
+  }
+
+  const handlePrev = () => goToPage(page - 1)
+  const handleNext = () => goToPage(page + 1)
 
   const formatNumber = n => {
     if (n >= 1_000_000) return `${(n/1_000_000).toFixed(1)}M`
@@ -98,6 +111,9 @@ export default function App() {
                   <div className="star-badge">⭐ {formatNumber(repo.stargazers_count)}</div>
                 </div>
                 <p className="repo-desc">{repo.description || 'No description'}</p>
+                  <div className="repo-date">
+                    <span>Published: {formatDateDMY(repo.created_at)}</span>
+                  </div>
                 <div className="repo-footer">
                   <div className="owner">
                     <img className="small-avatar" src={repo.owner.avatar_url} alt={repo.owner.login} />
@@ -109,10 +125,18 @@ export default function App() {
           ))}
         </section>
 
-        <div ref={sentinelRef} />
+        <div className="pagination">
+          <button className="page-button" onClick={handlePrev} disabled={page === 1 || loading}>
+            ← Prev
+          </button>
+          <span className="page-info">Page {page}</span>
+          <button className="page-button" onClick={handleNext} disabled={!hasMore || loading}>
+            Next →
+          </button>
+        </div>
 
         {loading && (
-          <div className="loading">Loading more repositories...</div>
+          <div className="loading">Loading repositories...</div>
         )}
 
         {!hasMore && repos.length > 0 && (
