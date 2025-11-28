@@ -19,8 +19,6 @@ Quick start (Windows / cmd.exe):
 Notes:
 - Uses Vite + React. The app calls the GitHub Search API.
 - If you hit rate limits while testing, provide a personal GitHub token via environment variables or test sporadically.
+- Features pagination with 30 results per page, date of upload, sorted of most starred repos and autoscroll back to top when switching page.
 
-Next steps or improvements:
-- Add lightweight caching and optional GitHub token support to increase rate limits.
-- Add tests and storybook for components.
-Assesment for Etiqa employment
+
