@@ -1,8 +1,8 @@
-# Etiqa-assesment
+# Etiqa Assessment
 
-This project is a small React app that will list the most-starred GitHub repositories created in the last 10 days.
+This project is a small React app for the "React Mobile Developer Assessment". It lists the most-starred GitHub repositories created in the last 10 days and provides an infinite-scroll experience.
 
-Current status: Initial React + Vite scaffold created. Next steps will implement fetching from the GitHub Search API and infinite scroll.
+Current status: Fetching and infinite-scroll list implemented, responsive mobile-first UI, and run instructions below.
 
 Quick start (Windows / cmd.exe):
 
@@ -14,9 +14,13 @@ Quick start (Windows / cmd.exe):
 
 	npm run dev
 
-The app will be available at http://localhost:3000 by default.
+3. Open the app using the printed Local URL (for example http://localhost:3000)
 
 Notes:
-- This scaffold uses Vite + React. Axios is included in package.json for later use when wiring the GitHub API.
-- Follow-up tasks: implement the repository list, pagination/infinite scroll, and unit tests.
+- Uses Vite + React. The app calls the GitHub Search API.
+- If you hit rate limits while testing, provide a personal GitHub token via environment variables or test sporadically.
+
+Next steps or improvements:
+- Add lightweight caching and optional GitHub token support to increase rate limits.
+- Add tests and storybook for components.
 Assesment for Etiqa employment
